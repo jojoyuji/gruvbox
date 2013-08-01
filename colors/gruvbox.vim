@@ -175,7 +175,7 @@ if version >= 703
 	" Concealed element: \lambda → λ"
 	call s:HL('Conceal', 'blue', 'none')"
 
-	" Line number of CursorLine 
+	" Line number of CursorLine
 	call s:HL('CursorLineNr', 'yellow', 'dark1')
 endif
 
@@ -405,7 +405,8 @@ call s:HL('htmlTag', 'blue')
 call s:HL('htmlEndTag', 'blue')
 
 call s:HL('htmlTagName', 'aqua', '', 'bold')
-call s:HL('htmlArg', 'aqua')
+call s:HL('htmlArg', 'red')
+call s:HL('htmlString', 'yellow')
 
 call s:HL('htmlScriptTag', 'purple')
 call s:HL('htmlTagN', 'light1')
