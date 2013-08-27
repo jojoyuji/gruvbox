@@ -416,6 +416,11 @@ call s:HL('htmlLink', 'light4', '', 'underline')
 
 call s:HL('htmlSpecialChar', 'orange')
 
+
+
+
+
+call s:HL('javascriptString', 'yellow')
 " }}}
 " Vim: {{{
 
