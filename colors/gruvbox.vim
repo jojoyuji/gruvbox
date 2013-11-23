@@ -1,11 +1,223 @@
 " -----------------------------------------------------------------------------
+" File: gruvbox.vim
+" Description: Retro groove color scheme for Vim
+" Author: morhetz <morhetz@gmail.com>
+" Source: https://github.com/morhetz/gruvbox
+" Last Modified: 11 Oct 2013
+" -----------------------------------------------------------------------------
+
+" Supporting code -------------------------------------------------------------
+" Initialisation: {{{
+
+if version > 580
+	hi clear
+	if exists("syntax_on")
+		syntax reset
+	endif
+endif
+
+let g:colors_name='gruvbox'
+
+if !has('gui_running') && &t_Co != 256
+	finish
+endif
+
+" }}}
+" Global settings: {{{
+
+if !exists('g:gruvbox_bold')
+	let g:gruvbox_bold=1
+endif
+if !exists('g:gruvbox_italic')
+	let g:gruvbox_italic=1
+endif
+if !exists('g:gruvbox_underline')
+	let g:gruvbox_underline=1
+endif
+
+if !exists('g:gruvbox_italicize_comments')
+	let g:gruvbox_italicize_comments=1
+endif
+if !exists('g:gruvbox_italicize_strings')
+	let g:gruvbox_italicize_strings=0
+endif
+
+if !exists('g:gruvbox_termcolors')
+	let g:gruvbox_termcolors=256
+endif
+
+if !exists('g:gruvbox_invert_indent_guides')
+	let g:gruvbox_invert_indent_guides=0
+endif
+
+if !exists('g:gruvbox_hls_cursor')
+	let g:gruvbox_hls_cursor='orange'
+endif
+
+if &background == 'light'
+	let s:gruvbox_background='light'
+else
+	let s:gruvbox_background='dark'
+endif
+
+" }}}
+" Palette: {{{
+
+let s:gb = {}
+
+if &background == 'dark'
+	let s:gb.dark0  = ['282828', 235]     " 40-40-40
+	let s:gb.dark1  = ['3c3836', 237]     " 60-56-54
+	let s:gb.dark2  = ['504945', 239]     " 80-73-69
+	let s:gb.dark3  = ['665c54', 241]     " 102-92-84
+	let s:gb.dark4  = ['7c6f64', 243]     " 124-111-100
+
+	let s:gb.medium = ['928374', 245]     " 146-131-116
+
+	let s:gb.light0 = ['fdf4c1', 229]     " 253-244-193
+	let s:gb.light1 = ['ebdbb2', 223]     " 235-219-178
+	let s:gb.light2 = ['d5c4a1', 250]     " 213-196-161
+	let s:gb.light3 = ['bdae93', 248]     " 189-174-147
+	let s:gb.light4 = ['a89984', 246]     " 168-153-132
+
+	let s:gb.light4_256 = ['a89984', 246] " 168-153-132
+
+	let s:gb.red    = ['fb4934', 167]     " 251-73-52
+	let s:gb.green  = ['b8bb26', 142]     " 184-187-38
+	let s:gb.yellow = ['fabd2f', 214]     " 250-189-47
+	let s:gb.blue   = ['83a598', 109]     " 131-165-152
+	let s:gb.purple = ['d3869b', 175]     " 211-134-155
+	let s:gb.aqua   = ['8ec07c', 108]     " 142-192-124
+	let s:gb.orange = ['fe8019', 208]     " 254-128-25
+
+	if g:gruvbox_termcolors == 16
+		let s:gb.dark0  = ['282828', 0]
+		let s:gb.light4 = ['a89984', 7]
+		let s:gb.medium = ['928374', 8]
+		let s:gb.red    = ['fb4934', 9]
+		let s:gb.green  = ['b8bb26', 10]
+		let s:gb.yellow = ['fabd2f', 11]
+		let s:gb.blue   = ['83a598', 12]
+		let s:gb.purple = ['d3869b', 13]
+		let s:gb.aqua   = ['8ec07c', 14]
+		let s:gb.light1 = ['ebdbb2', 15]
+	endif
+else
+	let s:gb.dark0  = ['fdf4c1', 229]     " 253-244-193
+	let s:gb.dark1  = ['ebdbb2', 223]     " 235-219-178
+	let s:gb.dark2  = ['d5c4a1', 250]     " 213-196-161
+	let s:gb.dark3  = ['bdae93', 248]     " 189-174-147
+	let s:gb.dark4  = ['a89984', 246]     " 168-153-132
+
+	let s:gb.medium = ['928374', 244]     " 146-131-116
+
+	let s:gb.light0 = ['282828', 235]     " 40-40-40
+	let s:gb.light1 = ['3c3836', 237]     " 60-56-54
+	let s:gb.light2 = ['504945', 239]     " 80-73-69
+	let s:gb.light3 = ['665c54', 241]     " 102-92-84
+	let s:gb.light4 = ['7c6f64', 243]     " 124-111-100
+
+	let s:gb.light4_256 = ['7c6f64', 243] " 124-111-100
+
+	let s:gb.red    = ['9d0006', 88]      " 157-0-6
+	let s:gb.green  = ['79740e', 100]     " 121-116-14
+	let s:gb.yellow = ['b57614', 136]     " 181-118-20
+	let s:gb.blue   = ['076678', 24]      " 7-102-120
+	let s:gb.purple = ['8f3f71', 96]      " 143-63-113
+	let s:gb.aqua   = ['427b58', 66]      " 66-123-88
+	let s:gb.orange = ['af3a03', 130]     " 175-58-3
+
+	if g:gruvbox_termcolors == 16
+		let s:gb.dark0  = ['fdf4c1', 0]
+		let s:gb.light4 = ['7c6f64', 7]
+		let s:gb.medium = ['928374', 8]
+		let s:gb.red    = ['9d0006', 9]
+		let s:gb.green  = ['79740e', 10]
+		let s:gb.yellow = ['b57614', 11]
+		let s:gb.blue   = ['076678', 12]
+		let s:gb.purple = ['8f3f71', 13]
+		let s:gb.aqua   = ['427b58', 14]
+		let s:gb.light1 = ['3c3836', 15]
+	endif
+endif
+
+" }}}
+" Highlighting Function: {{{
+
+function! s:HL(group, fg, ...)
+	" Arguments: group, guifg, guibg, gui, guisp
+
+	let histring = 'hi ' . a:group . ' '
+
+	if strlen(a:fg)
+		if a:fg == 'fg'
+			let histring .= 'guifg=fg ctermfg=fg '
+		elseif a:fg == 'bg'
+			let histring .= 'guifg=bg ctermfg=bg '
+		elseif a:fg == 'none'
+			let histring .= 'guifg=NONE ctermfg=NONE '
+		else
+			let c = get(s:gb, a:fg)
+			let histring .= 'guifg=#' . c[0] . ' ctermfg=' . c[1] . ' '
+		endif
+	endif
+
+	if a:0 >= 1 && strlen(a:1)
+		if a:1 == 'bg'
+			let histring .= 'guibg=bg ctermbg=bg '
+		elseif a:fg == 'fg'
+			let histring .= 'guibg=fg ctermbg=fg '
+		elseif a:1 == 'none'
+			let histring .= 'guibg=NONE ctermbg=NONE '
+		else
+			let c = get(s:gb, a:1)
+			let histring .= 'guibg=#' . c[0] . ' ctermbg=' . c[1] . ' '
+		endif
+	else
+		let histring .= 'guibg=NONE ctermbg=NONE '
+	endif
+
+	if a:0 >= 2 && strlen(a:2)
+		if a:2 == 'none'
+			let histring .= 'gui=NONE cterm=NONE '
+		elseif a:2 == 'italic' && g:gruvbox_italic == 0
+			let histring .= 'gui=NONE cterm=NONE '
+		elseif a:2 == 'bold' && g:gruvbox_bold == 0
+			let histring .= 'gui=NONE cterm=NONE '
+		elseif a:2 == 'bold,inverse' && g:gruvbox_bold == 0
+			let histring .= 'gui=inverse cterm=inverse '
+		elseif a:2 == 'underline' && g:gruvbox_underline == 0
+			let histring .= 'gui=NONE cterm=NONE '
+		elseif a:2 == 'bold,italic'
+			if g:gruvbox_italic == 0 && g:gruvbox_bold == 0
+				let histring .= 'gui=NONE cterm=NONE '
+			elseif g:gruvbox_italic == 0
+				let histring .= 'gui=bold cterm=bold '
+			elseif g:gruvbox_bold == 0
+				let histring .= 'gui=italic cterm=italic '
+			else
+				let histring .= 'gui=' . a:2 . ' cterm=' . a:2 . ' '
+			endif
+		else
+			let histring .= 'gui=' . a:2 . ' cterm=' . a:2 . ' '
+		endif
+	else
+		let histring .= 'gui=NONE cterm=NONE '
+	endif
+
+	if a:0 >= 3 && strlen(a:3)
+		if a:3 == 'none'
+			let histring .= 'guisp=NONE '
+		else
+			let c = get(s:gb, a:3)
+			let histring .= 'guisp=#' . c[0] . ' '
+		endif
 	endif
 
 	execute histring
 endfunction
 
 " }}}
-
 " Vanilla colorscheme ---------------------------------------------------------
 " General UI: {{{
 
