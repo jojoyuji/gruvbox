@@ -3,7 +3,7 @@
 " Description: Retro groove color scheme for Vim
 " Author: morhetz <morhetz@gmail.com>
 " Source: https://github.com/morhetz/gruvbox
-" Last Modified: 11 Oct 2013
+" Last Modified: 16 Dec 2013
 " -----------------------------------------------------------------------------
 
 " Supporting code -------------------------------------------------------------
@@ -31,6 +31,9 @@ endif
 if !exists('g:gruvbox_italic')
 	let g:gruvbox_italic=1
 endif
+if !exists('g:gruvbox_undercurl')
+	let g:gruvbox_undercurl=1
+endif
 if !exists('g:gruvbox_underline')
 	let g:gruvbox_underline=1
 endif
@@ -54,18 +57,30 @@ if !exists('g:gruvbox_hls_cursor')
 	let g:gruvbox_hls_cursor='orange'
 endif
 
-if &background == 'light'
-	let s:gruvbox_background='light'
-else
-	let s:gruvbox_background='dark'
+if !exists('g:gruvbox_sign_column')
+	let g:gruvbox_sign_column='dark1'
 endif
+
+if !exists('g:gruvbox_invert_signs')
+	let g:gruvbox_invert_signs=0
+endif
+
+if !exists('g:gruvbox_invert_selection')
+	let g:gruvbox_invert_selection=1
+endif
+
+if !exists('g:gruvbox_contrast')
+	let g:gruvbox_contrast='medium'
+endif
+
+let s:is_dark=(&background == 'dark')
 
 " }}}
 " Palette: {{{
 
 let s:gb = {}
 
-if &background == 'dark'
+if s:is_dark
 	let s:gb.dark0  = ['282828', 235]     " 40-40-40
 	let s:gb.dark1  = ['3c3836', 237]     " 60-56-54
 	let s:gb.dark2  = ['504945', 239]     " 80-73-69
@@ -101,6 +116,14 @@ if &background == 'dark'
 		let s:gb.purple = ['d3869b', 13]
 		let s:gb.aqua   = ['8ec07c', 14]
 		let s:gb.light1 = ['ebdbb2', 15]
+	endif
+
+	if g:gruvbox_contrast == 'soft'
+		let s:gb.dark0  = ['32302f', 236]     " 50-48-47
+	endif
+
+	if g:gruvbox_contrast == 'hard'
+		let s:gb.dark0  = ['1d2021', 234]     " 29-32-33
 	endif
 else
 	let s:gb.dark0  = ['fdf4c1', 229]     " 253-244-193
@@ -138,6 +161,14 @@ else
 		let s:gb.purple = ['8f3f71', 13]
 		let s:gb.aqua   = ['427b58', 14]
 		let s:gb.light1 = ['3c3836', 15]
+	endif
+
+	if g:gruvbox_contrast == 'soft'
+		let s:gb.dark0  = ['f4e8ba', 228]     " 244-232-186
+	endif
+
+	if g:gruvbox_contrast == 'hard'
+		let s:gb.dark0  = ['ffffc8', 230]     " 255-255-200
 	endif
 endif
 
@@ -186,6 +217,8 @@ function! s:HL(group, fg, ...)
 			let histring .= 'gui=NONE cterm=NONE '
 		elseif a:2 == 'bold,inverse' && g:gruvbox_bold == 0
 			let histring .= 'gui=inverse cterm=inverse '
+		elseif a:2 == 'undercurl' && g:gruvbox_undercurl == 0
+			let histring .= 'gui=NONE cterm=NONE '
 		elseif a:2 == 'underline' && g:gruvbox_underline == 0
 			let histring .= 'gui=NONE cterm=NONE '
 		elseif a:2 == 'bold,italic'
@@ -227,10 +260,10 @@ call s:HL('Normal', 'light1', 'dark0')
 " Correct background (see issue #7):
 " --- Problem with changing between dark and light on 256 color terminal
 " --- https://github.com/morhetz/gruvbox/issues/7
-if s:gruvbox_background == 'light'
-	set background=light
-else
+if s:is_dark
 	set background=dark
+else
+	set background=light
 endif
 
 if version >= 700
@@ -264,11 +297,16 @@ endif
 call s:HL('NonText',    'dark2')
 call s:HL('SpecialKey', 'dark2')
 
-call s:HL('Visual',    'none',  'dark3', 'inverse')
-call s:HL('VisualNOS', 'none',  'dark3', 'inverse')
+if g:gruvbox_invert_selection == 0
+	call s:HL('Visual',    'none',  'dark2')
+	call s:HL('VisualNOS', 'none',  'dark2')
+else
+	call s:HL('Visual',    'none',  'dark3', 'inverse')
+	call s:HL('VisualNOS', 'none',  'dark3', 'inverse')
+endif
 
 call s:HL('Search',    'dark0', 'yellow')
-call s:HL('IncSearch', 'dark0', 'yellow')
+call s:HL('IncSearch', 'dark0', g:gruvbox_hls_cursor)
 
 call s:HL('Underlined', 'blue', 'none', 'underline')
 
@@ -305,7 +343,7 @@ call s:HL('WarningMsg', 'red', 'none', 'bold')
 call s:HL('LineNr', 'dark4')
 
 " Column where signs are displayed
-call s:HL('SignColumn', 'none', 'bg')
+call s:HL('SignColumn', 'none', g:gruvbox_sign_column)
 
 " Line used for closed folds
 call s:HL('Folded', 'medium', 'dark1', 'italic')
@@ -334,6 +372,7 @@ else
 	call s:HL('Comment', 'medium', 'none', 'italic')
 endif
 call s:HL('Todo', 'fg', 'bg', 'bold')
+call s:HL('Error', 'bg', 'red', 'bold')
 
 " Generic statement
 call s:HL('Statement',   'red')
@@ -346,7 +385,7 @@ call s:HL('Label',       'red')
 " try, catch, throw
 call s:HL('Exception',   'red')
 " sizeof, "+", "*", etc.
-hi! def link Operator Normal
+hi! link Operator Normal
 " Any other keyword
 call s:HL('Keyword',     'red')
 
@@ -437,8 +476,8 @@ endif
 " Plugin specific -------------------------------------------------------------
 " EasyMotion: {{{
 
-hi! def link EasyMotionTarget Search
-hi! def link EasyMotionShade Comment
+hi! link EasyMotionTarget Search
+hi! link EasyMotionShade Comment
 
 " }}}
 " Indent Guides: {{{
@@ -454,28 +493,114 @@ else
 endif
 
 " }}}
-" Better Rainbow Parentheses: {{{
+" Rainbow Parentheses: {{{
 
 let g:rbpt_colorpairs = [
-	\ ['brown',       '#458588'],
-	\ ['Darkblue',    '#b16286'],
-	\ ['darkgray',    '#cc241d'],
-	\ ['darkgreen',   '#d65d0e'],
-	\ ['darkcyan',    '#458588'],
-	\ ['darkred',     '#b16286'],
-	\ ['darkmagenta', '#cc241d'],
-	\ ['brown',       '#d65d0e'],
-	\ ['gray',        '#458588'],
-	\ ['black',       '#b16286'],
-	\ ['darkmagenta', '#cc241d'],
-	\ ['Darkblue',    '#d65d0e'],
-	\ ['darkgreen',   '#458588'],
-	\ ['darkcyan',    '#b16286'],
-	\ ['darkred',     '#cc241d'],
-	\ ['red',         '#d65d0e'],
+	\ ['brown',       '#458588'], ['Darkblue',    '#b16286'],
+	\ ['darkgray',    '#cc241d'], ['darkgreen',   '#d65d0e'],
+	\ ['darkcyan',    '#458588'], ['darkred',     '#b16286'],
+	\ ['darkmagenta', '#cc241d'], ['brown',       '#d65d0e'],
+	\ ['gray',        '#458588'], ['black',       '#b16286'],
+	\ ['darkmagenta', '#cc241d'], ['Darkblue',    '#d65d0e'],
+	\ ['darkgreen',   '#458588'], ['darkcyan',    '#b16286'],
+	\ ['darkred',     '#cc241d'], ['red',         '#d65d0e'],
 	\ ]
 
+let g:rainbow_guifgs = [
+        \ '#458588', '#b16286', '#cc241d', '#d65d0e',
+        \ '#458588', '#b16286', '#cc241d', '#d65d0e',
+        \ '#458588', '#b16286', '#cc241d', '#d65d0e',
+        \ '#458588', '#b16286', '#cc241d', '#d65d0e',
+        \ ]
+
+let g:rainbow_ctermfgs = [
+            \ 'brown', 'Darkblue', 'darkgray', 'darkgreen',
+            \ 'darkcyan', 'darkred', 'darkmagenta', 'brown',
+            \ 'gray', 'black', 'darkmagenta', 'Darkblue',
+            \ 'darkgreen', 'darkcyan', 'darkred', 'red',
+            \ ]
+
 "}}}
+" Airline: {{{
+
+if !exists('g:airline_theme_map')
+	let g:airline_theme_map = { 'gruvbox.*': 'tomorrow' }
+else
+	let g:airline_theme_map['gruvbox.*'] = 'tomorrow'
+endif
+
+" }}}
+" GitGutter: {{{
+
+if g:gruvbox_invert_signs == 0
+	call s:HL('GitGutterAdd', 'green', g:gruvbox_sign_column)
+	call s:HL('GitGutterChange', 'aqua', g:gruvbox_sign_column)
+	call s:HL('GitGutterDelete', 'red', g:gruvbox_sign_column)
+	call s:HL('GitGutterChangeDelete', 'aqua', g:gruvbox_sign_column)
+else
+	call s:HL('GitGutterAdd', 'green', g:gruvbox_sign_column, 'inverse')
+	call s:HL('GitGutterChange', 'aqua', g:gruvbox_sign_column, 'inverse')
+	call s:HL('GitGutterDelete', 'red', g:gruvbox_sign_column, 'inverse')
+	call s:HL('GitGutterChangeDelete', 'aqua', g:gruvbox_sign_column, 'inverse')
+endif
+
+" }}}
+" Signify: {{{
+
+if g:gruvbox_invert_signs == 0
+	call s:HL('SignifySignAdd', 'green', g:gruvbox_sign_column)
+	call s:HL('SignifySignChange ', 'aqua', g:gruvbox_sign_column)
+	call s:HL('SignifySignDelete', 'red', g:gruvbox_sign_column)
+else
+	call s:HL('SignifySignAdd', 'green', g:gruvbox_sign_column, 'inverse')
+	call s:HL('SignifySignChange ', 'aqua', g:gruvbox_sign_column, 'inverse')
+	call s:HL('SignifySignDelete', 'red', g:gruvbox_sign_column, 'inverse')
+endif
+
+" }}}
+" Syntastic: {{{
+
+call s:HL('SyntasticError', 'none', 'none', 'undercurl', 'red')
+call s:HL('SyntasticWarning', 'none', 'none', 'undercurl', 'yellow')
+
+if g:gruvbox_invert_signs == 0
+	call s:HL('SyntasticErrorSign', 'red', g:gruvbox_sign_column)
+	call s:HL('SyntasticWarningSign', 'yellow', g:gruvbox_sign_column)
+else
+	call s:HL('SyntasticErrorSign', 'red', g:gruvbox_sign_column, 'inverse')
+	call s:HL('SyntasticWarningSign', 'yellow', g:gruvbox_sign_column, 'inverse')
+endif
+
+" }}}
+" Signature {{{
+
+if g:gruvbox_invert_signs == 0
+	call s:HL('SignatureMarkerText', 'purple', g:gruvbox_sign_column)
+	call s:HL('SignatureMarkText', 'blue', g:gruvbox_sign_column)
+else
+	call s:HL('SignatureMarkerText', 'purple', g:gruvbox_sign_column, 'inverse')
+	call s:HL('SignatureMarkText', 'blue', g:gruvbox_sign_column, 'inverse')
+endif
+
+let g:SignatureMarkerTextHL='SignatureMarkerText'
+let g:SignatureMarkTextHL='SignatureMarkText'
+
+" }}}
+" ShowMarks: {{{
+
+if g:gruvbox_invert_signs == 0
+	call s:HL('ShowMarksHLl', 'blue', g:gruvbox_sign_column)
+	call s:HL('ShowMarksHLu', 'blue', g:gruvbox_sign_column)
+	call s:HL('ShowMarksHLo', 'blue', g:gruvbox_sign_column)
+	call s:HL('ShowMarksHLm', 'blue', g:gruvbox_sign_column)
+else
+	call s:HL('ShowMarksHLl', 'blue', g:gruvbox_sign_column, 'inverse')
+	call s:HL('ShowMarksHLu', 'blue', g:gruvbox_sign_column, 'inverse')
+	call s:HL('ShowMarksHLo', 'blue', g:gruvbox_sign_column, 'inverse')
+	call s:HL('ShowMarksHLm', 'blue', g:gruvbox_sign_column, 'inverse')
+endif
+
+" }}}
 
 " Filetype specific -----------------------------------------------------------
 " Diff: {{{
@@ -524,9 +649,9 @@ else
 	call s:HL('vimCommentTitle', 'light4_256', 'none', 'bold,italic')
 endif
 
-"hi! def link vimVar Identifier
-"hi! def link vimFunc Function
-"hi! def link vimUserFunc Function
+"hi! link vimVar Identifier
+"hi! link vimFunc Function
+"hi! link vimUserFunc Function
 
 
 "call s:HL('vimUserFunc', 'green', 'none', 'bold')
@@ -546,11 +671,12 @@ endif
 "call s:HL('vimUserFunc', 'purple')
 "call s:HL('vimUserFunc', 'purple')
 
-"hi! def link vimFunc Function
-"hi! def link vimUserFunc Function
+"hi! link vimFunc Function
+"hi! link vimUserFunc Function
 
 " }}}
 " Clojure: {{{
+
 call s:HL('clojureKeyword', 'blue')
 call s:HL('clojureCond', 'orange')
 call s:HL('clojureSpecial', 'orange')
@@ -577,18 +703,11 @@ call s:HL('clojureMeta', 'yellow')
 call s:HL('clojureDeref', 'yellow')
 call s:HL('clojureQuote', 'yellow')
 call s:HL('clojureUnquote', 'yellow')
+
 " }}}
 
 " Functions -------------------------------------------------------------------
 " Search Highlighting {{{
-
-"function! gruvbox#bg_toggle()
-"	if &background == 'dark'
-"		set bg=light
-"	else
-"		set bg=dark
-"	endif
-"endfunction
 
 function! gruvbox#hls_show()
 	set hlsearch
