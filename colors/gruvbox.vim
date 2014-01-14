@@ -86,6 +86,7 @@ if s:is_dark
 	let s:gb.dark2  = ['504945', 239]     " 80-73-69
 	let s:gb.dark3  = ['665c54', 241]     " 102-92-84
 	let s:gb.dark4  = ['7c6f64', 243]     " 124-111-100
+	let s:gb.dark5  = ['222222', 243]     " 124-111-100
 
 	let s:gb.medium = ['928374', 245]     " 146-131-116
 
@@ -340,7 +341,7 @@ call s:HL('WarningMsg', 'red', 'none', 'bold')
 " Gutter: {{{
 
 " Line number for :number and :# commands
-call s:HL('LineNr', 'dark4')
+call s:HL('LineNr', 'dark4', 'dark5')
 
 " Column where signs are displayed
 call s:HL('SignColumn', 'none', g:gruvbox_sign_column)
