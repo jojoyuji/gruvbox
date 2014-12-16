@@ -96,7 +96,7 @@ if s:is_dark
 	let s:gb.light3 = ['bdae93', 248]     " 189-174-147
 	let s:gb.light4 = ['a89984', 246]     " 168-153-132
 
-	let s:gb.light4_256 = ['a89984', 246] " 168-153-132
+  let s:gb.light4_256 = ['a89984', 246] " 168-153-132
 
 	let s:gb.red    = ['fb4934', 167]     " 251-73-52
 	let s:gb.green  = ['b8bb26', 142]     " 184-187-38
@@ -141,7 +141,7 @@ else
 	let s:gb.light3 = ['665c54', 241]     " 102-92-84
 	let s:gb.light4 = ['7c6f64', 243]     " 124-111-100
 
-	let s:gb.light4_256 = ['7c6f64', 243] " 124-111-100
+  let s:gb.light4_256 = ['7c6f64', 243] " 124-111-100
 
 	let s:gb.red    = ['9d0006', 88]      " 157-0-6
 	let s:gb.green  = ['79740e', 100]     " 121-116-14
@@ -341,7 +341,7 @@ call s:HL('WarningMsg', 'red', 'none', 'bold')
 " Gutter: {{{
 
 " Line number for :number and :# commands
-call s:HL('LineNr', 'dark4', 'dark5')
+call s:HL('LineNr', 'dark4', 'dark1')
 
 " Column where signs are displayed
 call s:HL('SignColumn', 'none', g:gruvbox_sign_column)
