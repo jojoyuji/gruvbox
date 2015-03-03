@@ -812,7 +812,6 @@ call s:HL('xmlAttribPunct', 'medium')
 
 call s:HL('xmlEntity', 'orange')
 
->>>>>>> upstream/master
 " }}}
 " Vim: {{{
 
