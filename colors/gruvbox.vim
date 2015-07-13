@@ -927,6 +927,7 @@ call s:HL('javaScriptNumber', 'purple')
 call s:HL('javaScriptNull', 'purple')
 call s:HL('javaScriptParens', 'light3')
 call s:HL('javascriptString', 'yellow')
+call s:HL('javascriptOperator', 'aqua')
 
 " }}}
 " CoffeeScript: {{{
